@@ -1,3 +1,4 @@
+import argparse
 import requests
 import hashlib
 
@@ -71,5 +72,57 @@ def check_password_from_file(file):
     
     return results.items()
 
+def main():
+    """
+    The main function checks whether a password or a file containing passwords have
+    been leaked and provides the results either in the console or saves them in a
+    file.
+    """
+    parser = argparse.ArgumentParser(
+        description='Check whether the password(s) provided have been leaked.'
+        )
+    parser.add_argument(
+        '-p',
+        '--password',
+        type=str,
+        help='Password to be verified.'
+    )
+    parser.add_argument(
+        '-f', '--file', 
+        type=str, 
+        help='Path to the file with passwords.'
+        )
+    parser.add_argument(
+        '-sF', '--save-file', 
+        type=str, 
+        help='Path to save the file with the output information.'
+    )
+    args = parser.parse_args()
+
+    if args.password:
+        count = check_password(args.password)
+
+        if count:
+            print(f"This password has been leaked {count} times."
+                    " It's recommended not to use it.")
+        else:
+            print('The password was not found in the leaks. Good choice!')
+
+    elif args.file and not args.save_file:
+        results = check_password_from_file(args.file)
+        for password, status in results:
+            print(f'Password: {password}  Status: {status}')
+    
+    elif args.file and args.save_file:
+        results = check_password_from_file(args.file)
+        output_file = f'{args.save_file}.txt'
+
+        with open(output_file, 'a') as f:
+            for password, result in results:
+                f.write(f"{password}: {result}\n")
+        
+        print(f'The results were saved in "{output_file}".')
+
+
 if __name__ == '__main__':
-    ...
+    main()
