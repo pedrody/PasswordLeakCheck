@@ -2,6 +2,11 @@ import argparse
 import requests
 import hashlib
 
+RESET_COLOR = '\033[0m'
+RED_COLOR = '\033[31m'
+GREEN_COLOR = '\033[32m'
+YELLOW_COLOR = '\033[93m'
+
 
 def convert_password_to_hash(password):
     """
@@ -103,15 +108,16 @@ def main():
         count = check_password(args.password)
 
         if count:
-            print(f"This password has been leaked {count} times."
-                    " It's recommended not to use it.")
+            print(f"{RED_COLOR}This password has been leaked {count} times."
+                    f" It's recommended not to use it.{RESET_COLOR}")
         else:
-            print('The password was not found in the leaks. Good choice!')
+            print(f'{GREEN_COLOR}The password was not found in the leaks. Good choice!{RESET_COLOR}')
 
     elif args.file and not args.save_file:
         results = check_password_from_file(args.file)
         for password, status in results:
-            print(f'Password: {password}  Status: {status}')
+            color = GREEN_COLOR if status == 'Not Leaked' else RED_COLOR
+            print(f'{color}Password: {password} | Status: {status}{RESET_COLOR}')
     
     elif args.file and args.save_file:
         results = check_password_from_file(args.file)
@@ -121,7 +127,7 @@ def main():
             for password, result in results:
                 f.write(f"{password}: {result}\n")
         
-        print(f'The results were saved in "{output_file}".')
+        print(f'{YELLOW_COLOR}The results were saved in "{output_file}".{RESET_COLOR}')
 
 
 if __name__ == '__main__':
