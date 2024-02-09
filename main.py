@@ -47,5 +47,29 @@ def check_password(password):
     else:
         response.raise_for_status()
 
+def check_password_from_file(file):
+    """
+    The function `check_password_from_file` reads passwords from a file, checks if
+    they have been leaked, and returns a dictionary with the passwords as keys and
+    their leak status as values.
+    
+    :param file: The `file` parameter is the name or path of the file that contains
+    a list of passwords
+    :return: a list of tuples, where each tuple contains a password and its
+    corresponding result.
+    """
+    with open(file, 'r') as f:
+        passwords = f.read().splitlines()
+    
+    results = {}
+    for password in passwords:
+        count = check_password(password)
+        if count:
+            results[password] = f'Leaked {count} times'
+        else:
+            results[password] = 'Not Leaked'
+    
+    return results.items()
+
 if __name__ == '__main__':
     ...
