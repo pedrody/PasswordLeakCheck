@@ -149,25 +149,25 @@ def main():
             print(f'{GREEN_COLOR}The password was not found in the leaks. Good choice!{RESET_COLOR}')
 
     # Checks if a file of passwords is provided
-    elif args.file and not args.save_file:
+    elif args.file:
         results = check_password_from_file(args.file)
         # Prints the results for each password
         for password, status in results:
             color = GREEN_COLOR if status == 'Not Leaked' else RED_COLOR
             print(f'{color}Password: {password} | Status: {status}{RESET_COLOR}')
-    
-    # Checks if a file of passwords is provided and an output file is specified
-    elif args.file and args.save_file:
-        results = check_password_from_file(args.file)
-        output_file = f'{args.save_file}.txt'
-
-        # Saves the results to a file
-        with open(output_file, 'a') as f:
-            for password, result in results:
-                f.write(f"{password}: {result}\n")
         
-        # Prints a message informing where
-        print(f'{YELLOW_COLOR}The results were saved in "{output_file}".{RESET_COLOR}')
+        # Checks if and output file is specified to save the results
+        if args.save_file:
+            output_file = f'{args.save_file}.txt'
+            
+            # Writes the results to the output file
+            with open(output_file, 'a') as f:
+                for password, result in results:
+                    f.write(f'{password}: {result}\n')
+            
+            # Prints a message indicating where the results have been saved
+            print(f'\n{YELLOW_COLOR}The results were saved in ' 
+                f'"{output_file}".{RESET_COLOR}')
 
 if __name__ == '__main__':
     main()
