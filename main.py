@@ -13,7 +13,7 @@ def convert_password_to_hash(password):
     """
     The function `convert_password_to_hash` takes a password as input, converts it
     to a SHA-1 hash, and returns the hash split into a prefix and suffix.
-    
+
     :param password: The `password` parameter is the string that you want to convert
     to a hash
     :return: a tuple containing two strings. The first string is the prefix, which
@@ -34,7 +34,7 @@ def check_password(password):
     """
     The `check_password` function checks if a given password has been compromised by
     querying the Pwned Passwords API.
-    
+
     :param password: The `password` parameter is a string that represents the
     password that needs to be checked
     :return: The function `check_password` returns an integer value representing the
@@ -60,7 +60,7 @@ def check_password(password):
         # Splits the response into lines and then splits each line into hash
         # and count
         hashes = (line.split(':') for line in response.text.splitlines())
-        
+
         # Iterates over the returned hashes
         for h, count in hashes:
             # If the hash matches the password's hash suffix, returns the count
@@ -68,27 +68,28 @@ def check_password(password):
                 return int(count)
         # If the hash is not found, return 0 (not compromised)
         return 0
-    
+
     else:
         # If the request fails, raises an exception with the status code
         response.raise_for_status()
+
 
 def check_password_from_file(file):
     """
     The function `check_password_from_file` reads passwords from a file, checks if
     they have been leaked, and returns a dictionary with the passwords as keys and
     their leak status as values.
-    
+
     :param file: The `file` parameter is the name or path of the file that contains
     a list of passwords
     :return: a list of tuples, where each tuple contains a password and its
     corresponding result.
     """
-    
+
     # Reads passwords from the file
     with open(file, 'r') as f:
         passwords = f.read().splitlines()
-    
+
     results = {}
     # For each password, checks if it has been compromised
     for password in passwords:
@@ -98,8 +99,9 @@ def check_password_from_file(file):
             results[password] = f'Leaked {count} times'
         else:
             results[password] = 'Not Leaked'
-    
+
     return results.items()
+
 
 def main():
     """
@@ -111,8 +113,8 @@ def main():
     # Setting up the parser to proccess command-line arguments
     parser = argparse.ArgumentParser(
         description='Check whether the password(s) provided have been leaked.'
-        )
-    
+    )
+
     # Argument to specify the passwords
     parser.add_argument(
         '-p',
@@ -123,15 +125,15 @@ def main():
 
     # Argument to specify a file with passwords
     parser.add_argument(
-        '-f', '--file', 
-        type=str, 
+        '-f', '--file',
+        type=str,
         help='Path to the file with passwords.'
-        )
-    
+    )
+
     # Argument to save the results to a file
     parser.add_argument(
-        '-sF', '--save-file', 
-        type=str, 
+        '-sF', '--save-file',
+        type=str,
         help='Path to save the file with the output information.'
     )
     args = parser.parse_args()
@@ -143,10 +145,11 @@ def main():
         # If compromised, prints a warning message
         if count:
             print(f"{RED_COLOR}This password has been leaked {count} times."
-                    f" It's recommended not to use it.{RESET_COLOR}")
+                  f" It's recommended not to use it.{RESET_COLOR}")
         # If not compromised, prints a success message
         else:
-            print(f'{GREEN_COLOR}The password was not found in the leaks. Good choice!{RESET_COLOR}')
+            print(f'{GREEN_COLOR}The password was not found in the leaks. Good choice!{
+                  RESET_COLOR}')
 
     # Checks if a file of passwords is provided
     elif args.file:
@@ -154,20 +157,22 @@ def main():
         # Prints the results for each password
         for password, status in results:
             color = GREEN_COLOR if status == 'Not Leaked' else RED_COLOR
-            print(f'{color}Password: {password} | Status: {status}{RESET_COLOR}')
-        
+            print(f'{color}Password: {password} | Status: {
+                  status}{RESET_COLOR}')
+
         # Checks if and output file is specified to save the results
         if args.save_file:
             output_file = f'{args.save_file}.txt'
-            
+
             # Writes the results to the output file
             with open(output_file, 'a') as f:
                 for password, result in results:
                     f.write(f'{password}: {result}\n')
-            
+
             # Prints a message indicating where the results have been saved
-            print(f'\n{YELLOW_COLOR}The results were saved in ' 
-                f'"{output_file}".{RESET_COLOR}')
+            print(f'\n{YELLOW_COLOR}The results were saved in '
+                  f'"{output_file}".{RESET_COLOR}')
+
 
 if __name__ == '__main__':
     main()
