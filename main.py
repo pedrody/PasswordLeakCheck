@@ -115,14 +115,6 @@ def main():
         description='Check whether the password(s) provided have been leaked.'
     )
 
-    # Argument to specify the passwords
-    parser.add_argument(
-        '-p',
-        '--password',
-        type=str,
-        help='Password to be verified.'
-    )
-
     # Argument to specify a file with passwords
     parser.add_argument(
         '-f', '--file',
@@ -136,20 +128,26 @@ def main():
         type=str,
         help='Path to save the file with the output information.'
     )
+
+    # Positional argument to accpet multiple passwords
+    parser.add_argument('passwords', metavar='password',
+                        type=str, nargs='*', help='Passwords to be verified')
+
     args = parser.parse_args()
 
     # Checks if a password is provided
-    if args.password:
-        count = check_password(args.password)
+    if args.passwords:
+        for password in args.passwords:
+            count = check_password(password)
 
-        # If compromised, prints a warning message
-        if count:
-            print(f"{RED_COLOR}This password has been leaked {count} times."
-                  f" It's recommended not to use it.{RESET_COLOR}")
-        # If not compromised, prints a success message
-        else:
-            print(f'{GREEN_COLOR}The password was not found in the leaks. Good choice!{
-                  RESET_COLOR}')
+            # If compromised, prints a warning message
+            if count:
+                print(f"{RED_COLOR}Password '{password}' has been leaked {count} times."
+                      f" It's recommended not to use it.{RESET_COLOR}")
+            # If not compromised, prints a success message
+            else:
+                print(f"{GREEN_COLOR}Password '"
+                      f"{password}' was not found in the leaks. Good choice!{RESET_COLOR}")
 
     # Checks if a file of passwords is provided
     elif args.file:
