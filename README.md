@@ -5,7 +5,7 @@ This project is a Python script that allows you to check if a password has been 
 
  
 ## 🛠️ Features
-- Single Password Check: Checks if a provided password has been compromised.
+- Passwords Check: Checks if provided passwords has been compromised.
 - Batch Check: Checks multiple passwords provided in a file and reports if any have been compromised.
 - Save Results Option: The results of the checks can be saved to a text file for future reference.
 
@@ -37,7 +37,7 @@ Now you're ready to use the script!
 You can execute it from the command line, providing the following arguments:
 
 ```
--p, --password: Checks a specific password.
+[passwords]: Passwords to be verified
 
 -f, --file: Checks passwords listed in a file.
 
@@ -47,7 +47,7 @@ You can execute it from the command line, providing the following arguments:
 ### Example Usage
 
 ```
-python main.py -p PASSWORD_HERE
+python main.py [PASSWORDS]
 
 python main.py -f PASSWORD_LIST_HERE.txt
 
